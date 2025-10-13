@@ -1,0 +1,76 @@
+ ✅ Enable PostGIS Extension
+-- -------------------------------------------------
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+-- -------------------------------------------------
+-- ✅ Part A: Create Hospitals Table
+-- -------------------------------------------------
+DROP TABLE IF EXISTS Hospitals;
+
+CREATE TABLE Hospitals (
+    h_id SERIAL PRIMARY KEY,                   -- Unique Hospital ID
+    h_name VARCHAR(100) NOT NULL,              -- Hospital Name
+    address TEXT,                              -- Hospital Address
+    bed_capacity INT,                          -- Number of available beds
+    contact_no VARCHAR(15),                    -- Contact Number
+    location GEOGRAPHY(POINT, 4326)            -- Geo point (lat/long)
+);
+
+-- -------------------------------------------------
+-- ✅ Insert 10 Sample Hospital Records
+-- (Lat/Long values are approx around Mumbai)
+-- -------------------------------------------------
+INSERT INTO Hospitals (h_name, address, bed_capacity, contact_no, location) VALUES
+('City Care Hospital', 'Andheri, Mumbai', 120, '9876543210', ST_GeogFromText('SRID=4326;POINT(72.855 19.119)')),
+('Apollo Hospital', 'Navi Mumbai', 250, '9876543211', ST_GeogFromText('SRID=4326;POINT(73.022 19.033)')),
+('Fortis Hospital', 'Mulund, Mumbai', 300, '9876543212', ST_GeogFromText('SRID=4326;POINT(72.959 19.171)')),
+('Hiranandani Hospital', 'Powai, Mumbai', 150, '9876543213', ST_GeogFromText('SRID=4326;POINT(72.910 19.117)')),
+('Nanavati Hospital', 'Vile Parle, Mumbai', 220, '9876543214', ST_GeogFromText('SRID=4326;POINT(72.841 19.095)')),
+('Sion Hospital', 'Sion, Mumbai', 400, '9876543215', ST_GeogFromText('SRID=4326;POINT(72.862 19.042)')),
+('KEM Hospital', 'Parel, Mumbai', 350, '9876543216', ST_GeogFromText('SRID=4326;POINT(72.846 19.004)')),
+('Holy Spirit Hospital', 'Andheri East, Mumbai', 180, '9876543217', ST_GeogFromText('SRID=4326;POINT(72.865 19.111)')),
+('Lilavati Hospital', 'Bandra, Mumbai', 270, '9876543218', ST_GeogFromText('SRID=4326;POINT(72.830 19.054)')),
+('Tata Memorial Hospital', 'Parel, Mumbai', 500, '9876543219', ST_GeogFromText('SRID=4326;POINT(72.842 19.004)'));
+
+-- -------------------------------------------------
+-- ✅ Part B: Queries
+-- Assume Home Location = (72.850, 19.100)
+-- -------------------------------------------------
+
+-- 1) Find all hospitals within 5 km
+SELECT h_name, address, bed_capacity, contact_no
+FROM Hospitals
+WHERE ST_DWithin(
+    location,
+    ST_GeogFromText('SRID=4326;POINT(72.850 19.100)'), 
+    5000   -- Distance in meters (5 km)
+);
+
+-- 2) Find the nearest hospital from home with bed details
+SELECT h_name, address, bed_capacity, 
+       ST_Distance(
+           location, 
+           ST_GeogFromText('SRID=4326;POINT(72.850 19.100)')
+       ) AS distance_meters
+FROM Hospitals
+ORDER BY location <-> ST_GeogFromText('SRID=4326;POINT(72.850 19.100)')
+LIMIT 1;
+
+-- 3) Count number of hospitals within 5 km
+SELECT COUNT(*) AS hospital_count
+FROM Hospitals
+WHERE ST_DWithin(
+    location,
+    ST_GeogFromText('SRID=4326;POINT(72.850 19.100)'), 
+    5000
+);
+
+-- 4) Find hospitals with >100 beds within 7 km
+SELECT h_name, address, bed_capacity
+FROM Hospitals
+WHERE bed_capacity > 100
+  AND ST_DWithin(
+        location,
+        ST_GeogFromText('SRID=4326;POINT(72.850 19.100)'), 
+        7000   -- 7 km
+    );

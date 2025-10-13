@@ -1,0 +1,49 @@
+-- Enable PostGIS Extension
+CREATE EXTENSION postgis;
+
+-- Verify installation
+SELECT PostGIS_full_version();
+
+-- Create a table for storing cities
+CREATE TABLE cities (
+    id SERIAL PRIMARY KEY, 
+    name VARCHAR(100),
+    population INTEGER,
+    location GEOGRAPHY(Point, 4326) --4326 is Deafult Port Number
+);
+
+-- Insert records with spatial (latitude/longitude) data
+INSERT INTO cities (name, population, location)
+VALUES
+    ('Mumbai', 20000000, ST_GeogFromText('SRID=4326;POINT(72.8777 19.0760)')),
+    ('Delhi', 19000000, ST_GeogFromText('SRID=4326;POINT(77.1025 28.7041)')),
+    ('Bangalore', 10000000, ST_GeogFromText('SRID=4326;POINT(77.5946 12.9716)')),
+    ('Chennai', 9000000,  ST_GeogFromText('SRID=4326;POINT(80.2707 13.0827)')),
+	('Bhopal', 8000000,  ST_GeogFromText('SRID=4326;POINT(23.1996395 77.241076)')),
+	('Pune', 7000000,  ST_GeogFromText('SRID=4326;POINT(18.5248706 73.6981514)'));
+
+--Display Table
+select * from cities;
+
+-- Distance between Mumbai and Delhi (in kilometers)
+SELECT ST_Distance(
+    (SELECT location FROM cities WHERE name='Mumbai'),
+    (SELECT location FROM cities WHERE name='Delhi')
+) / 1000 AS distance_km; --Defacult in Meter Convert into KM
+
+
+-- Cities within 500 km of Mumbai
+SELECT name, population
+FROM cities
+WHERE ST_DWithin(
+    location,
+    ST_GeogFromText('SRID=4326;POINT(72.8777 19.0760)'), --From Mumbai
+    500000   -- 500 km in meters
+);
+
+-- Nearest city to Delhi
+SELECT name, population
+FROM cities
+WHERE name <> 'Delhi'
+ORDER BY location <-> ST_GeogFromText('SRID=4326;POINT(77.1025 28.7041)')
+LIMIT 2;

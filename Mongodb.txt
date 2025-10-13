@@ -1,0 +1,62 @@
+
+
+// Step 3: Create or Access Database
+use studentDB
+
+// Step 4: Create Collection
+db.createCollection("students")
+
+// Step 5: Insert Documents
+db.students.insertMany([
+  { roll_no: 101, name: "Riya Sharma", department: "Computer Science", semester: 3, marks: 88 },
+  { roll_no: 102, name: "Amit Kumar", department: "Mathematics", semester: 3, marks: 74 },
+  { roll_no: 103, name: "Priya Singh", department: "Computer Science", semester: 4, marks: 92 },
+  { roll_no: 104, name: "Rahul Mehta", department: "Physics", semester: 2, marks: 63 },
+  { roll_no: 105, name: "Sneha Patel", department: "Computer Science", semester: 1, marks: 48 },
+  { roll_no: 106, name: "Vikas Yadav", department: "Mathematics", semester: 2, marks: 81 }
+])
+
+// ✅ Records inserted successfully
+
+// Q1 – Find All Students from Computer Science Department
+db.students.find({ department: "Computer Science" }).pretty()
+
+// Q2 – Display Students with Marks Between 60 and 90
+db.students.find({ marks: { $gte: 60, $lte: 90 } }).pretty()
+
+// Q3 – Update Semester of Student roll_no = 102
+db.students.updateOne(
+  { roll_no: 102 },
+  { $set: { semester: 4 } }
+)
+
+// Q4 – Delete Students Whose Marks < 50
+db.students.deleteMany({ marks: { $lt: 50 } })
+
+// Q5 – Add Grade Field Based on Marks
+// Grade A (marks >= 85)
+db.students.updateMany(
+  { marks: { $gte: 85 } },
+  { $set: { grade: "A" } }
+)
+// Grade B (70 <= marks < 85)
+db.students.updateMany(
+  { marks: { $gte: 70, $lt: 85 } },
+  { $set: { grade: "B" } }
+)
+// Grade C (marks < 70)
+db.students.updateMany(
+  { marks: { $lt: 70 } },
+  { $set: { grade: "C" } }
+)
+
+// Q6 – Sort Students by Marks in Descending Order
+db.students.find().sort({ marks: -1 }).pretty()
+
+// Q7 – Count Students in Each Department
+db.students.aggregate([
+  { $group: { _id: "$department", total_students: { $sum: 1 } } }
+])
+
+// ✅ Final Check – Display All Records
+db.students.find().pretty()
