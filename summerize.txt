@@ -1,0 +1,12 @@
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.summarizers.lex_rank import LexRankSummarizer
+
+text = """Artificial Intelligence (AI) allows machines to learn from data and make decisions..."""
+
+parser = PlaintextParser.from_string(text, Tokenizer("english"))
+summarizer = LexRankSummarizer()
+
+summary = summarizer(parser.document, 2)
+for sentence in summary:
+    print(sentence)
