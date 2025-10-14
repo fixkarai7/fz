@@ -1,20 +1,24 @@
-from collections import Counter
 import re
 
-text = """
-Cheap watches available now! Best cheap watches for you.
-Buy cheap watches online. Cheap cheap cheap watches watches!
-"""
+docs = {
+  1: "information retrieval has 2 models and information.",
+  2: "Boolean is a basic information retrieval classic model.",
+  3: "information is a data that processed, information.",
+  4: "when a data processed the result is information, data"
+}
 
-words = re.findall(r'\b\w+\b', text.lower())
-count = Counter(words)
-SPAM_LIMIT = 4
+def has_word(doc, word):
+    words = set(re.findall(r'\w+', doc.lower()))
+    return word in words
 
-print("Word counts:")
-for w, c in count.items():
-    print(w, ":", c)
+all_docs = set(docs.keys())
 
-print("\nSpammy Words:")
-for w, c in count.items():
-    if c >= SPAM_LIMIT:
-        print(f"{w} appears {c} times (SPAM)")
+data_docs = {i for i, d in docs.items() if has_word(d, "data")}
+info_docs = {i for i, d in docs.items() if has_word(d, "information")}
+retrieval_docs = {i for i, d in docs.items() if has_word(d, "retrieval")}
+
+result = (data_docs & info_docs) | (all_docs - retrieval_docs)
+
+print("Documents matching query:")
+for i in sorted(result):
+    print(f"doc{i}:", docs[i])
