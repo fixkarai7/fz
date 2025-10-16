@@ -1,0 +1,31 @@
+Router0:
+Router>en
+Router#conf t
+
+Router(config)#router bgp 1
+Router(config-router)#network 10.0.0.0
+Router(config-router)#network 40.0.0.0
+Router(config-router)#neighbor 40.0.0.2 remote-as 2
+Router(config-router)#ex
+
+Router1:
+Router>en
+Router#conf t
+Router(config)#router bgp 2
+Router(config-router)#network 20.0.0.0
+Router(config-router)#network 40.0.0.0
+Router(config-router)#network 50.0.0.0
+Router(config-router)#neighbor 40.0.0.1 remote-as 1
+Router(config-router)#%BGP-5-ADJCHANGE: neighbor 40.0.0.1 Up
+
+Router(config-router)#neighbor 50.0.0.1 remote-as 3
+Router(config-router)#ex
+
+Router 2:
+Router>
+Router>en
+Router#conf t
+Router(config)#router bgp 3
+Router(config-router)#network 30.0.0.0
+Router(config-router)#network 50.0.0.0
+Router(config-router)#neighbor 50.0.0.2 remote-as 2
