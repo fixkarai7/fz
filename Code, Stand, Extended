@@ -1,0 +1,18 @@
+Standard
+Router(config)# access-list 1 deny host 192.168.1.2
+Router(config)# access-list 1 permit any
+Router(config)# interface g0/1
+Router(config-if)# ip access-group 1 out
+
+Extended ( http block)
+Router(config)# access-list 100 deny tcp host 192.168.1.2 0.0.0.255 host 30.0.0.2 eq 80
+Router(config)# access-list 100 permit ip any any
+Router(config)# interface g0/0
+Router(config-if)# ip access-group 100 in
+
+(ftp block)
+Router(config)# access-list 100 deny tcp host 192.168.1.2 0.0.0.255 host 30.0.0.2 eq ftp
+Router(config)# access-list 100 permit ip any any
+Router(config)# interface g0/0
+Router(config-if)# ip access-group 100 in
+
