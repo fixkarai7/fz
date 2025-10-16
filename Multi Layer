@@ -1,0 +1,42 @@
+Multilayer
+Switch>en
+Switch#conf t
+Enter configuration commands, one per line. End with CNTL/Z.
+
+Switch(config)#vlan 10
+Switch(config-vlan)#name yellow
+Switch(config-vlan)#exit
+
+Switch(config)#vlan 20
+Switch(config-vlan)#name blue
+Switch(config-vlan)#exit
+
+Switch(config)#int f0/1
+Switch(config-if)#switchport mode access
+Switch(config-if)#switchport access vlan 10
+Switch(config-if)#exit
+
+Switch(config)#int f0/2
+Switch(config-if)#switchport mode access
+Switch(config-if)#switchport access vlan 20
+Switch(config-if)#exit
+
+Switch(config)#int vlan 10
+Switch(config-if)#ip address 192.168.10.1 255.255.255.0
+Switch(config-if)#no shut
+Switch(config-if)#exit
+
+Switch(config)#int vlan 20
+Switch(config-if)#ip address 192.168.20.1 255.255.255.0
+Switch(config-if)#no shut
+Switch(config-if)#exit
+
+Switch(config)#ip routing
+
+Switch(config)#int gig0/1
+Switch(config-if)#no switchport
+Switch(config-if)#ip address 201.105.10.101 255.255.255.0
+Switch(config-if)#no shut
+Switch(config-if)#exit
+
+Switch(config)#ip default-gateway 201.105.10.10
