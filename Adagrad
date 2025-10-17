@@ -1,0 +1,20 @@
+function adagrad(f, df, initial_x, learning_rate, num_iterations)
+ x = initial_x
+ squared_gradient = 0.0
+ for i in 1:num_iterations
+ gradient = df(x)
+ squared_gradient += gradient^2
+ adjusted_learning_rate = learning_rate / sqrt(squared_gradient +
+1e-8)
+ x -= adjusted_learning_rate * gradient # Update x
+ end
+ return x
+end
+f(x) = x^2 - 4x + 4
+df(x) = 2x - 4
+initial_x = 0.0
+learning_rate = 0.1
+num_iterations = 10
+result = adagrad(f, df, initial_x, learning_rate, num_iterations)
+println("Minimum occurs at x = ", result)
+println("Minimum value of f(x) = ", f(result))
