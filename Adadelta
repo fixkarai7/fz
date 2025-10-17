@@ -1,0 +1,35 @@
+using LinearAlgebra
+
+function adadelta(f, df, initial_x, decay_factor, max_iterations, tol)
+    x = copy(initial_x)
+    E_g = zeros(length(x))  
+    E_d = zeros(length(x)) 
+
+    for iteration in 1:max_iterations
+        gradient = df(x)
+        E_g .= decay_factor .* E_g + (1 - decay_factor) .* gradient .^ 2
+        delta_x = sqrt.(E_d .+ 1e-8) ./ sqrt.(E_g .+ 1e-8) .* gradient
+        E_d .= decay_factor .* E_d + (1 - decay_factor) .* delta_x .^ 2
+        x .-= delta_x
+
+        if norm(gradient) < tol
+            println("Adadelta: Converged after $iteration iterations.")
+            return x
+        end
+    end
+
+    println("Adadelta: Did not converge after $max_iterations iterations.")
+    return x
+end
+
+f(x) = x[1]^2 + 2x[2]^2
+df(x) = [2x[1], 4x[2]]
+
+initial_x = [1.0, 1.0]
+decay_factor = 0.9
+max_iterations = 1000
+tolerance = 1e-6
+
+adadelta_result = adadelta(f, df, initial_x, decay_factor, max_iterations, tolerance)
+println("Adadelta minimum point:", adadelta_result)
+println("Adadelta minimum value:", f(adadelta_result))
