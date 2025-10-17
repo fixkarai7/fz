@@ -1,0 +1,26 @@
+function fibonacci_search(f, a, b, n)
+ gr = (1 + sqrt(5)) / 2
+ inv_gr = 1 / gr
+ fib = [1, 1]
+ for i in 3:n
+ push!(fib, fib[i-1] + fib[i-2])
+ end
+ for k in 1:n-2
+ c = a + (b - a) * inv_gr^2
+ d = a + (b - a) * inv_gr
+ if f(c) < f(d)
+ b = d
+ else
+ a = c
+ end
+ inv_gr = inv_gr / gr
+ end
+ return (a + b) / 2
+end
+f(x) = (x - 2)^2
+a = 0.0
+b = 3.0
+n = 10
+minimum = fibonacci_search(f, a, b, n)
+println("Minimum point:", minimum)
+println("Minimum value:", f(minimum))
