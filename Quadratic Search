@@ -1,0 +1,23 @@
+function quadratic_fit_search(f, a, b, tol)
+ while abs(b - a) > tol
+ x1 = a + (b - a) / 3
+ x2 = a + 2 * (b - a) / 3
+ f1 = f(x1)
+ f2 = f(x2)
+ x = a + (b - a) * (f1 < f2 ? 1/3 : 2/3)
+ fx = f(x)
+ if f1 < f2
+ b = x2
+ else
+ a = x1
+ end
+ end
+ return (a + b) / 2
+end
+f(x) = x^2 - 4x
+a = 0.0
+b = 3.0
+tolerance = 1e-6
+minimum = quadratic_fit_search(f, a, b, tolerance)
+println("Minimum point: ", minimum)
+println("Minimum value: ", f(minimum))
