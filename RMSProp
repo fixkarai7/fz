@@ -1,0 +1,24 @@
+function rmsprop(f, df, initial_x, learning_rate, decay_rate,
+num_iterations)
+ x = initial_x
+ squared_gradients = 0.0
+ for i in 1:num_iterations
+ gradient = df(x)
+ squared_gradients = decay_rate * squared_gradients + (1 -
+decay_rate) * gradient^2
+ adjusted_learning_rate = learning_rate / sqrt(squared_gradients +
+1e-8)
+ x -= adjusted_learning_rate * gradient
+ end
+ return x
+end
+f(x) = x^2 - 4x + 4
+df(x) = 2x - 4
+initial_x = 0.0
+learning_rate = 0.1
+num_iterations = 10
+decay_rate = 0.9
+result = rmsprop(f, df, initial_x, learning_rate, decay_rate,
+num_iterations)
+println("Minimum occurs at x = ", result)
+println("Minimum value of f(x) = ", f(result))
