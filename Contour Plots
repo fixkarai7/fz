@@ -1,0 +1,10 @@
+using Pkg
+Pkg.add("Plots")
+using Plots
+f(x, y) = x^2 + y^2
+x_range = -5:0.1:5
+y_range = -5:0.1:5
+X, Y = [x for x in x_range], [y for y in y_range]
+Z = [f(x, y) for x in x_range, y in y_range]
+contour(x_range, y_range, Z, levels=20, c=:viridis, xlabel="X",
+ylabel="Y", title="Contour Plot of f(x, y)")
