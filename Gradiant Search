@@ -1,0 +1,16 @@
+function gradient_descent(f, df, initial_x, learning_rate, num_iterations)
+ x = initial_x
+ for i in 1:num_iterations
+ gradient = df(x)
+ x -= learning_rate * gradient
+ end
+ return x
+end
+f(x) = x^2 - 4x + 4
+df(x) = 2x - 4
+initial_x = 0.0
+learning_rate = 0.1
+num_iterations = 100
+result = gradient_descent(f, df, initial_x, learning_rate, num_iterations)
+println("Minimum occurs at x = ", result)
+println("Minimum value of f(x) = ", f(result))
