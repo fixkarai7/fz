@@ -1,0 +1,28 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import datasets, linear_model
+from sklearn.metrics import accuracy_score, confusion_matrix
+# Load the Iris dataset
+iris = datasets.load_iris()
+# Split into features and target
+X = iris.data
+y = iris.target
+# Create logistic regression model
+clf = linear_model.LogisticRegression()
+# Train the model
+clf.fit(X, y)
+# Make predictions
+y_pred = clf.predict(X)
+# Evaluate accuracy
+accuracy = accuracy_score(y, y_pred)
+print("Accuracy:", accuracy)
+print("Confusion Matrix:")
+print(confusion_matrix(y, y_pred))
+# Plot actual vs predicted
+plt.scatter(X[:, 0], y, color='black', label='Actual')
+plt.plot(X[:, 0], y_pred, color='red', label='Predicted')
+plt.xlabel("Sepal Length")
+plt.ylabel("Species")
+plt.title("Logistic Regression Classification")
+plt.legend()
+plt.show()
