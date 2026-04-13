@@ -4,21 +4,29 @@ from tensorflow import keras
 from tensorflow.keras import layers
 import matplotlib.pyplot as plt
 
-url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data'
-column_names = ['MPG', 'Cylinders', 'Displacement', 'Horsepower',
-'Weight', 'Acceleration', 'Model Year', 'Origin']
+url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/mpg.csv"
+dataset = pd.read_csv(url)
 
-raw_dataset = pd.read_csv(
-    url,
-    names=column_names,
-    na_values='?',
-    comment='\t',
-    sep=' ',
-    skipinitialspace=True
-)
+dataset = dataset.rename(columns={
+    "mpg": "MPG",
+    "cylinders": "Cylinders",
+    "displacement": "Displacement",
+    "horsepower": "Horsepower",
+    "weight": "Weight",
+    "acceleration": "Acceleration",
+    "model_year": "Model Year",
+    "origin": "Origin"
+})
 
-dataset = raw_dataset.copy()
 dataset = dataset.dropna()
+
+dataset = dataset.drop(columns=['name'])
+
+dataset['USA'] = (dataset['Origin'] == 1)*1.0
+dataset['Europe'] = (dataset['Origin'] == 2)*1.0
+dataset['Japan'] = (dataset['Origin'] == 3)*1.0
+
+dataset = dataset.drop(columns=['Origin'])
 
 train_dataset = dataset.sample(frac=0.8, random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
@@ -29,7 +37,7 @@ test_labels = test_dataset.pop('MPG')
 train_stats = train_dataset.describe().transpose()
 
 def norm(x):
-    return (x - train_stats['mean']) / train_stats['std']
+    return (x - train_stats['mean']) / (train_stats['std'] + 1e-8)
 
 normed_train_data = norm(train_dataset)
 normed_test_data = norm(test_dataset)
@@ -40,32 +48,31 @@ model = keras.Sequential([
     layers.Dense(1)
 ])
 
-optimizer = tf.keras.optimizers.RMSprop(0.001)
+model.compile(
+    optimizer=tf.keras.optimizers.RMSprop(0.001),
+    loss='mse',
+    metrics=['mae', 'mse']
+)
 
-model.compile(loss='mse', optimizer=optimizer, metrics=['mae', 'mse'])
+early_stop = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
 
 history = model.fit(
     normed_train_data,
     train_labels,
-    epochs=100,
+    epochs=500,
     validation_split=0.2,
-    verbose=1
+    verbose=1,
+    callbacks=[early_stop]
 )
 
 loss, mae, mse = model.evaluate(normed_test_data, test_labels, verbose=2)
-print("Testing set Mean Abs Error: {:5.2f} MPG".format(mae))
+print("\nFinal MAE:", mae)
 
 test_predictions = model.predict(normed_test_data).flatten()
 
-plt.figure(figsize=(8,6))
 plt.scatter(test_labels, test_predictions)
-plt.xlabel('True Values [MPG]')
-plt.ylabel('Predictions [MPG]')
-plt.title('Auto MPG Regression - Predicted vs Actual')
-
-plt.plot(
-    [test_labels.min(), test_labels.max()],
-    [test_labels.min(), test_labels.max()]
-)
-
+plt.xlabel("True MPG")
+plt.ylabel("Predicted MPG")
+plt.title("True vs Predicted MPG")
+plt.plot([0, 100], [0, 100], color='red')
 plt.show()
