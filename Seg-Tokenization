@@ -1,16 +1,16 @@
 import re
-text = """Hello! My name is Fahad. I am learning Natural Language
-Processing.
-It is very interesting, isn't it? Let's try tokenization."""
+
+text = "Hello! My name is Fahad. I am learning NLP. It is very interesting."
 
 sentences = re.split(r'[.!?]+', text)
-sentences = [s.strip() for s in sentences if s.strip()]
 
 print("Sentences:")
-for i, sentence in enumerate(sentences):
-    print(f"{i+1}. {sentence}")
+for s in sentences:
+    if s:
+        print(s.strip())
 
 print("\nWord Tokens:")
-for i, sentence in enumerate(sentences):
-    words = sentence.split()
-    print(f"Sentence {i+1} words: {words}")
+for s in sentences:
+    if s:
+        words = s.split()
+        print(words)
