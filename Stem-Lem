@@ -1,0 +1,7 @@
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+text = "The boys are playing football and running faster than before"
+words = text.split()
+ps = PorterStemmer()
+lemmatizer = WordNetLemmatizer()
+print("Stemmed:", [ps.stem(w) for w in words])
+print("Lemmatized:", [lemmatizer.lemmatize(w) for w in words])
