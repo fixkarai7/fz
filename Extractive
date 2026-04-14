@@ -1,0 +1,28 @@
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from collections import defaultdict
+
+nltk.download('punkt')
+
+text = """Artificial Intelligence is transforming the world. 
+It helps in automation, healthcare, and education. 
+AI improves efficiency and saves time. 
+However, it also raises ethical concerns."""
+
+sentences = sent_tokenize(text)
+
+word_freq = defaultdict(int)
+for word in word_tokenize(text.lower()):
+    if word.isalnum():
+        word_freq[word] += 1
+
+sent_score = {}
+for sent in sentences:
+    for word in word_tokenize(sent.lower()):
+        if word in word_freq:
+            sent_score[sent] = sent_score.get(sent, 0) + word_freq[word]
+
+summary = sorted(sent_score, key=sent_score.get, reverse=True)[:2]
+
+for s in summary:
+    print(s)
