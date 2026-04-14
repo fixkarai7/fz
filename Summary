@@ -1,0 +1,29 @@
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+from collections import defaultdict
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+text = """Artificial Intelligence is the simulation of human intelligence in machines.
+It enables machines to learn from experience. AI is widely used in healthcare,
+finance, and transportation. It helps in decision making and automation.
+AI is the future of technology."""
+
+stop_words = set(stopwords.words('english'))
+
+freq = defaultdict(int)
+for w in word_tokenize(text.lower()):
+    if w.isalnum() and w not in stop_words:
+        freq[w] += 1
+
+scores = defaultdict(int)
+for sent in sent_tokenize(text):
+    for w in word_tokenize(sent.lower()):
+        scores[sent] += freq[w]
+
+summary = sorted(scores, key=scores.get, reverse=True)[:2]
+
+print("Summary:")
+print("\n".join(summary))
