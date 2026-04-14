@@ -1,0 +1,21 @@
+import wikipedia
+from wordcloud import WordCloud
+import matplotlib.pyplot as plt
+
+topic = "Artificial Intelligence"
+
+# Get text
+text = wikipedia.page(topic).content
+
+# Create word cloud
+wordcloud = WordCloud(
+    width=800,
+    height=400,
+    background_color='white'
+).generate(text)
+
+# Display
+plt.figure(figsize=(10,5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.show()
