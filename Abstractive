@@ -1,0 +1,12 @@
+from transformers import pipeline
+
+summarizer = pipeline("summarization")
+
+text = """Artificial Intelligence is transforming the world. 
+It helps in automation, healthcare, and education. 
+AI improves efficiency and saves time. 
+However, it also raises ethical concerns."""
+
+summary = summarizer(text, max_length=50, min_length=20, do_sample=False)
+
+print(summary[0]['summary_text'])
