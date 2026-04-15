@@ -1,0 +1,29 @@
+d = 0.85
+A = B = C = D = E = F = 1
+
+def outdeg(p):
+    return {
+        "A": 2,
+        "B": 4,
+        "C": 2,
+        "D": 1,
+        "E": 1,
+        "F": 1,
+    }[p]
+
+for i in range(30):
+    PR_A = (1-d) + d * (B / outdeg("B") + C / outdeg("C"))
+    PR_B = (1-d) + d * (A / outdeg("A"))
+    PR_C = (1-d) + d * (A / outdeg("A"))
+    PR_D = (1-d) + d * (B / outdeg("B"))
+    PR_E = (1-d) + d * (B / outdeg("B"))
+    PR_F = (1-d) + d * (B / outdeg("B") + C / outdeg("C"))
+    
+    A, B, C, D, E, F = PR_A, PR_B, PR_C, PR_D, PR_E, PR_F
+
+print("PR(A) =", round(A, 4))
+print("PR(B) =", round(B, 4))
+print("PR(C) =", round(C, 4))
+print("PR(D) =", round(D, 4))
+print("PR(E) =", round(E, 4))
+print("PR(F) =", round(F, 4))
