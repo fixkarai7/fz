@@ -1,0 +1,21 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+G = nx.DiGraph()
+
+edges = [
+    ("Home", "About"),
+    ("Home", "Services"),
+    ("About", "Team"),
+    ("Services", "Contact"),
+    ("Contact", "Home"),
+    ("Services", "About")
+]
+
+G.add_edges_from(edges)
+
+pos = nx.spring_layout(G)
+nx.draw(G, pos, with_labels=True, arrows=True)
+
+plt.title("Website Link Graph")
+plt.show()
