@@ -1,9 +1,0 @@
-from gtts import gTTS
-from IPython.display import Audio
-
-text = "Hello, this is text to speech using Google"
-
-tts = gTTS(text=text, lang='en')
-tts.save("output.mp3")
-
-Audio("output.mp3")
