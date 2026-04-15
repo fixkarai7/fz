@@ -1,0 +1,15 @@
+graph = {
+    'A': ['B', 'C'],
+    'B': ['C', 'D'],
+    'C': ['D'],
+    'D': []
+}
+in_degree = {page: 0 for page in graph}
+out_degree = {page: len(graph[page]) for page in graph}
+for page, links in graph.items():
+    for link in links:
+        if link in in_degree:
+            in_degree[link] += 1
+print("Page\tIn-Degree\tOut-Degree")
+for page in graph:
+    print(f"{page}\t{in_degree[page]}\t\t{out_degree[page]}")
