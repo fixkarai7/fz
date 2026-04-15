@@ -1,0 +1,20 @@
+d = 0.85
+A = B = C = 1
+
+def outdeg(p):
+    return {
+        "A": 2,
+        "B": 1,
+        "C": 1,
+    }[p]
+
+for i in range(30):
+    PR_A = (1 - d) + d * (C / outdeg("C"))
+    PR_B = (1 - d) + d * (A / outdeg("A"))
+    PR_C = (1 - d) + d * (A / outdeg("A") + B / outdeg("B"))
+    
+    A, B, C = PR_A, PR_B, PR_C
+
+print("PR(A) =", round(A, 4))
+print("PR(B) =", round(B, 4))
+print("PR(C) =", round(C, 4))
