@@ -1,0 +1,15 @@
+import networkx as nx
+
+G = nx.DiGraph()
+G.add_edges_from([
+    ('p', 'q'),
+    ('p', 's'),
+    ('p', 'r'),
+    ('q', 'r'),
+    ('s', 's')
+])
+
+authority_score, hub_score = nx.hits(G)
+
+print("Authority Score:", authority_score)
+print("Hub Score:", hub_score)
