@@ -1,0 +1,23 @@
+
+getwd()
+
+setwd("C:/Users/admin/Downloads")
+
+library(igraph)
+
+nodes <- read.csv("Nodes.csv", header = TRUE, as.is = TRUE)
+head(nodes)
+tail(nodes)
+
+link <- read.csv("Edges.csv", header = TRUE, as.is = TRUE)
+link
+
+mediagraph <- graph_from_data_frame(
+  d = link,
+  vertices = nodes,
+  directed = TRUE
+)
+
+get.adjacency(mediagraph)
+
+plot(mediagraph)
