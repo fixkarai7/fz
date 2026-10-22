@@ -1,0 +1,56 @@
+Practical No.05
+
+Aim : Map Reduce Average Age Calculation db.person.insertMany( [
+{ "_id": 1, "name": "Alice", "age": 25, "city": "New York" },
+{ "_id": 2, "name": "Bob", "age": 30, "city": "San Francisco" },
+{ "_id": 3, "name": "Charlie", "age": 35, "city": "Los Angeles" },
+{ "_id": 4, "name": "David", "age": 40, "city": "Chicago" },
+{ "_id": 5, "name": "Eve", "age": 28, "city": "Miami" } ] ); 
+
+
+Insert data
+
+db.person.insertMany([
+{ "_id": 1, "name": "Alice", "age": 25, "city": "New York" },
+{ "_id": 2, "name": "Bob", "age": 30, "city": "San Francisco" },
+{ "_id": 3, "name": "Charlie", "age": 35, "city": "Los Angeles" },
+{ "_id": 4, "name": "David", "age": 40, "city": "Chicago" },
+{ "_id": 5, "name": "Eve", "age": 28, "city": "Miami" }
+])
+
+A) Map function
+
+var mapFunction = function() { emit("average_age", {
+total: this.age, count: 1
+});
+};
+
+B) Reduce function
+
+var reduceFunction = function(key, values) { var result = {
+total: 0,
+count: 0
+};
+
+values.forEach(function(value) { result.total += value.total; result.count += value.count;
+});
+
+return result;
+};
+
+C) Finalize function
+
+var finalizeFunction = function(key, value) { return value.total / value.count;
+};
+
+D) Execute
+
+db.person.mapReduce( mapFunction, reduceFunction,
+{
+out: "average_age", finalize: finalizeFunction
+}
+)
+
+E) Display result
+
+db.average_age.find()
