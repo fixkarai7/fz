@@ -1,0 +1,81 @@
+Practical No.06
+
+Use Python interface for MongoDB to access an Employee collection with features Empid,Empname, dept,designation and salary and perform the following:
+a.Display all documents
+b.Insert a document { “Empid”:116,”Empname”: ”Alex”,”dept”:”IT”,”designation”:”Manager”}
+c.Display document of a particular empid 114
+d.Update the salary of emp id 111 to 65000
+Delete the record of empid116 
+
+
+First, in Jupyter, run:
+!pip install pymongo
+
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+ db = client["Organization"]
+employee = db["Employee"]
+
+print("Connected to MongoDB")
+
+
+employee.insert_many([
+{
+"Empid": 111, "Empname": "John",
+"dept": "IT",
+"designation": "Developer", "salary": 55000
+},
+{
+"Empid": 112, "Empname": "Alice",
+"dept": "HR", "designation": "Executive", "salary": 45000
+},
+{
+"Empid": 113, "Empname": "Bob",
+"dept": "Sales","designation": "Manager", "salary": 60000
+},
+{
+"Empid": 114, "Empname": "David",
+"dept": "IT", "designation": "Analyst", "salary": 58000
+},
+{
+"Empid": 115, "Empname": "Priya",
+"dept": "Finance", "designation": "Accountant", "salary": 50000
+}
+])
+
+
+A) Display all Employee documents
+
+for emp in employee.find(): print(emp)
+
+B) Insert employee 116
+
+employee.insert_one({ "Empid": 116, "Empname": "Alex",
+"dept": "IT", "designation": "Manager"
+})
+
+print("Employee 116 inserted successfully")
+
+C) Display document of Empid 114
+
+emp = employee.find_one({"Empid": 114}) print(emp)
+
+D) Update salary of Empid 111 to 65000
+
+employee.update_one(
+{"Empid": 111},
+{"$set": {"salary": 65000}}
+)
+
+print("Salary of Empid 111 updated successfully")
+
+E) Delete record of Empid 116
+
+employee.delete_one({"Empid": 116})
+print("Employee 116 deleted successfully") 
+print(employee.find_one({"Empid": 116}))
+
+F) display all employees
+
+for emp in employee.find(): print(emp)
