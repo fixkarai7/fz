@@ -1,0 +1,90 @@
+Practical No.02
+Aim : Create a mongodb Collection named as Library with documents with fields as Userid, No_of_books , Bookdetails (which itself is an array of documents consisting of fields Title,Author ) and insert below records into it.
+
+Perform the following on the documents
+
+use book
+switched to db books
+db.createcollection("Library")
+{"ok" ; 1}
+
+
+db.Library.insertMany([
+{
+Userid: "U001", No_of_books: 2, Bookdetails: [
+{
+Title: "Mastering Cloud Computing", Author: "Rajkumar Buyya"
+},
+{
+Title: "Data Science", Author: "Dr.Upadhyay"
+}
+]
+},
+{
+Userid: "U002", No_of_books: 3, Bookdetails: [
+{
+Title: "Graphics", Author: "Dr.Mehta"
+},
+{
+Title: "Python", Author: "S.D.Sharma"
+},
+{
+Title: "DBMS", Author: "B.K.Sharma"
+}
+]
+},
+{
+Userid: "U003", No_of_books: 2, Bookdetails: [
+{
+Title: "OS",
+Author: "Silberchatz"
+},
+{
+Title: "Python", Author: "S.D.Sharma"
+},
+{
+Title: "DBMS", Author: "B.K.Sharma"
+}
+]
+},
+{
+Userid: "U004", No_of_books: 1, Bookdetails: [
+{
+Title: "Python", Author: "S.D.Sharma"
+}
+]
+}
+])
+
+a.Display all documents where No_of_books<3
+
+db.Library.find({ No_of_books: { $lt: 3 }
+})
+
+b.Sort the documents on the basis of ascending order of No_of_Books
+
+db.Library.find().sort({ No_of_books: 1
+})
+
+c.Display only Userid and Bookdetails
+
+db.Library.find(
+{},
+{
+_id: 0,
+Userid: 1,
+Bookdetails: 1
+}
+)
+
+d.Display only Bookdetails where No_of_books is either 3 or 2
+
+db.Library.find(
+{
+No_of_books: { $in: [2, 3] }
+},
+{
+_id: 0,
+Bookdetails: 1
+}
+)
