@@ -1,0 +1,42 @@
+Practical No.04
+
+Aim : Map reduce on the following data for calculating word count db.words.insertMany([
+{ "_id": 1, "text": "hello world mongoDB is a NoSQL database" },
+{ "_id": 2, "text": "hello mongoDB hello world" },
+{ "_id": 3, "text": "hello OpenAI chatGPT is amazing" },
+{ "_id": 4, "text": "world of mongoDB and big data" },
+{ "_id": 5, "text": "data science and machine learning" } ]) 
+
+
+Insert data
+
+db.words.insertMany([
+{ "_id": 1, "text": "hello world mongoDB is a NoSQL database" },
+{ "_id": 2, "text": "hello mongoDB hello world" },
+{ "_id": 3, "text": "hello OpenAI chatGPT is amazing" },
+{ "_id": 4, "text": "world of mongoDB and big data" },
+{ "_id": 5, "text": "data science and machine learning" }
+])
+
+A) Map function
+
+var mapFunction = function() { var words = this.text.split(" ");
+
+words.forEach(function(word) { emit(word, 1);
+});
+};
+
+B) Reduce function
+
+var reduceFunction = function(key, values) { return Array.sum(values);
+};
+
+C) Execute MapReduce
+
+db.words.mapReduce( mapFunction, reduceFunction,
+{ out: "word_count" }
+)
+
+D) Display result
+
+db.word_count.find().sort({ value: -1 })
