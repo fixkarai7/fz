@@ -1,0 +1,45 @@
+Employee Records Using Redis Hashes
+
+Using Python and Redis, create employee records using Hashes.
+For employee E101:
+Name: Amit Department: IT Salary: 50000
+For employee E102:
+Name: Neha Department: HR Salary: 45000
+Write a program to:
+Add both employees. Display their details. Update E101's salary. Delete E102.
+Check whether E102 still exists
+
+
+1.Add both employees
+
+r.hset("employee:E101", mapping={ "name": "Amit",
+"department": "IT", "salary": 50000
+})
+
+r.hset("employee:E102", mapping={ "name": "Neha",
+"department": "HR", "salary": 45000
+})
+
+print("Employee records added successfully")
+
+2.Display E101 and E102 details
+
+print("E101:", r.hgetall("employee:E101")) 
+print("E102:", r.hgetall("employee:E102"))
+
+3.Update E101's salary
+
+r.hset("employee:E101", "salary", 55000)
+print("E101 salary updated successfully")
+
+4.Delete E102
+
+r.delete("employee:E102")
+print("E102 deleted successfully")
+
+5.Check whether E102 still exists
+
+if r.exists("employee:E102"):
+print("E102 still exists")
+else:
+print("E102 does not exists")
