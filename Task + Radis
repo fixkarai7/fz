@@ -1,0 +1,28 @@
+Task Queue Using Redis List Create a task queue using a Redis List. The program should:
+
+1.Add five tasks to the queue.
+2.Display all tasks.
+3.Remove tasks from the left side one by one.
+4.Display each processed task.
+5.Display the remaining tasks. Use appropriate Redis list operations.
+
+
+1.Add five tasks
+
+tasks = [
+"Task 1: Check emails", "Task 2: Process data", "Task 3: Generate report", "Task 4: Backup database", "Task 5: Send report"
+]
+
+for task in tasks: r.rpush("task_queue", task)
+
+print("Five tasks added successfully") print(r.lrange("task_queue", 0, -1))
+
+2.Remove tasks from the left and process them
+
+while r.llen("task_queue") > 0: 
+task = r.lpop("task_queue")
+print("Processed:", task)
+
+3.Display remaining tasks
+
+print("Remaining tasks:", r.lrange("task_queue", 0, -1))
