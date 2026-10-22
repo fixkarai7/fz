@@ -1,0 +1,42 @@
+Practical No.03
+
+Aim : Map reduce on following data to calculate Total Sales by Product
+{ "_id": 1, "product": "apple", "amount": 100 }
+{ "_id": 2, "product": "banana", "amount": 150 }
+{ "_id": 3, "product": "apple", "amount": 200 }
+{ "_id": 4, "product": "oranges", "amount": 100 }
+{ "_id": 5, "product": "banana", "amount": 350 }
+{ "_id": 6, "product": "oranges", "amount": 200 }
+
+
+Code :
+
+Insert data
+
+db.sales.insertMany([
+{ "_id": 1, "product": "apple", "amount": 100 },
+{ "_id": 2, "product": "banana", "amount": 150 },
+{ "_id": 3, "product": "apple", "amount": 200 },
+{ "_id": 4, "product": "oranges", "amount": 100 },
+{ "_id": 5, "product": "banana", "amount": 350 },
+{ "_id": 6, "product": "oranges", "amount": 200 }
+])
+
+A) Map Function 
+
+var mapFunction = function() { emit(this.product, this.amount);
+
+B) Reduce Function
+
+var reduceFunction = function(key, values) { return Array.sum(values);
+};
+
+C) Execute MapReduce
+
+db.sales.mapReduce( mapFunction, reduceFunction,
+{ out: "total_sales" }
+)
+
+D) Display result
+
+db.total_sales.find()
