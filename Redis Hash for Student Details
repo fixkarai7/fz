@@ -1,0 +1,39 @@
+Redis Hash for Student Details
+
+Write a Python program to store the following student details in a Redis Hash: Roll No: 101,Name: Rahul,Course: BCA,Marks: 85
+Perform the following:
+
+Display all student details. 
+Display only the student's name.
+Update the marks to 90. 
+Delete the course field.
+
+
+
+1.Create the student hash
+
+student = { "roll_no": 101, "name": "Rahul",
+"course": "BCA", "marks": 85
+}
+r.hset("student:101", mapping=student) 
+print("Student details stored successfully")
+
+2.Display all student details
+
+print(r.hgetall("student:101"))
+
+3.Display only the student's name
+
+print("Name:", r.hget("student:101", "name"))
+
+4.Update marks to 90
+
+r.hset("student:101", "marks", 90)
+print("Marks updated successfully") 
+print("Marks:", r.hget("student:101", "marks"))
+
+5.Delete the course field
+
+r.hdel("student:101", "course") 
+print("Course field deleted") 
+print(r.hgetall("student:101"))
