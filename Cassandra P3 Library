@@ -1,0 +1,69 @@
+Practical No. 03:
+Aim : Design a Cassandra database for a library management system. Create a keyspace library and a table books containing:
+●book_id
+●title
+●author
+●category
+●price
+●availability Perform 5 queries:
+1.Insert 5 books.
+2.Display all books.
+3.Retrieve a particular book using book_id.
+4.Change the availability status of a book.
+5.Delete a book and display the updated table.
+
+1.Create keyspace
+
+CREATE KEYSPACE library WITH replication = {
+'class': 'SimpleStrategy', 'replication_factor': 1
+};
+
+USE library;
+
+2.Create books table
+
+CREATE TABLE books (
+book_id int PRIMARY KEY, title text,
+author text, category text, price int, availability text
+);
+
+3.Insert 5 books
+
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(1, 'DBMS', 'Korth', 'Database', 650, 'Available');
+
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(2, 'Python Programming', 'Guido', 'Programming', 550, 'Available');
+
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(3, 'Operating System', 'Silberschatz', 'OS', 700, 'Available');
+
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(4, 'Computer Networks', 'Tanenbaum', 'Networking', 800, 'Available');
+
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(5, 'Data Science', 'Han', 'Data Science', 900, 'Available');
+
+4.Display all books
+SELECT * FROM books;
+
+5.Retrieve a particular book
+
+SELECT * FROM books 
+WHERE book_id = 3;
+
+6.Change availability
+
+UPDATE books
+SET availability = 'Not Available' 
+WHERE book_id = 3;
+
+7.Delete a book
+
+DELETE FROM books 
+WHERE book_id = 5;
