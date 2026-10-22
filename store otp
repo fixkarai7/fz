@@ -1,0 +1,29 @@
+Generate and Store OTP in Redis
+Write a Python program that generates a 4-digit OTP and stores it in Redis. Requirements:
+●Generate a random OTP.
+●Store it under a key such as otp:user101.
+●Set its expiration to 120 seconds.
+●Retrieve and display the OTP.
+●Display its remaining TTL.
+
+
+1.Generate a random 4-digit OTP
+
+import random
+otp = random.randint(1000, 9999) 
+print("Generated OTP:", otp)
+
+2.Store OTP with 120-second expiration
+
+r.setex("otp:user101", 120, otp)
+print("OTP stored successfully")
+
+3.Retrieve and display the OTP
+
+stored_otp = r.get("otp:user101")
+print("Stored OTP:", stored_otp)
+
+4.Display remaining TTL
+
+ttl = r.ttl("otp:user101")
+print("Remaining TTL:", ttl, "seconds")
