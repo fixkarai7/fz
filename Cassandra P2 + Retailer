@@ -1,0 +1,68 @@
+Practical No. 02:
+Aim : For an online retailer’s product catalog in Apache Cassandra, with requirements to store product details (descriptions, pricing, stock levels, and categories) and to support fast queries by product ID, category, and price range, you need to design the schema to support these types of queries efficiently.
+
+Query Questions
+1.Get all the products in the category electronics
+2.Get all products in the category clothing which is less than 1000
+3.Retrieving the data in the sorted order of price for the category clothing.
+4.Get products where the category is electronics and stock is greater than 100.
+
+1.Create keyspace
+
+CREATE KEYSPACE retailer WITH replication = {
+'class': 'SimpleStrategy', 'replication_factor': 1
+};
+
+USE retailer;
+
+2.Create products table
+
+CREATE TABLE products ( category text,
+price int, product_id int, product_name text, stock int,
+PRIMARY KEY ((category), price, product_id)
+) WITH CLUSTERING ORDER BY (price ASC);
+
+3.Insert 5 products
+
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('electronics', 55000, 101, 'Laptop', 50);
+
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('electronics', 25000, 102, 'Mobile', 150);
+
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('clothing', 800, 103, 'T-Shirt', 200);
+
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('clothing', 1500, 104, 'Jeans', 80);
+
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('electronics', 2000, 105, 'Headphones', 120);
+
+4.Display all products
+
+SELECT * FROM products;
+
+Query 1 — Electronics
+
+SELECT * FROM products 
+WHERE category = 'electronics';
+
+Query 2 — Clothing with price < 1000
+
+SELECT * FROM products 
+WHERE category = 'clothing' 
+AND price < 1000;
+
+Query 3 — Clothing sorted by price
+
+SELECT * FROM products 
+WHERE category = 'clothing' 
+ORDER BY price ASC;
+
+Query 4 — Electronics with stock > 100
+
+SELECT * FROM products 
+WHERE category = 'electronics' 
+AND stock > 100
+ALLOW FILTERING;
