@@ -1,0 +1,131 @@
+CouchDB
+
+{ "roll_no": 101, "name": "AAA", "course": "CS", "marks": 490 }
+{ "roll_no": 102, "name": "Amit", "course": "IT", "marks": 450 }
+{ "roll_no": 103, "name": "Priya", "course": "DS", "marks": 420 }
+{ "roll_no": 104, "name": "Sneha", "course": "CS", "marks": 470 }
+{ "roll_no": 105, "name": "Ravi", "course": "IT", "marks": 385 }
+
+●Create Index for sorting
+●Find a student by rollno 101
+●Find student who scored more than 400
+●Find student belonging to course CS and marks greater than 400
+●Retrieve the students who are either in course CS or have scored more than 400
+●Write a query to sort the documents in the descending order of marks
+●Select all students of CS and sort them in descending order of rollno and display only course and rollno
+
+Step 1 — Create the database
+On the Databases page, click the Database name field at the top, Enter: student
+
+Step 2 — Create the 5 documents
+Inside the student database, use New Document. 
+
+Document 1
+{
+"roll_no": 101, "name": "AAA",
+"course": "IT", "marks": 450
+}
+
+Document 2
+{
+"roll_no": 102, "name": "Amit",
+"course": "IT", "marks": 450
+}
+Document 3
+{
+"roll_no": 103, "name": "Priya",
+"course": "DS",
+"marks": 420
+}
+Document 4
+{
+"roll_no": 104, "name": "Sneha",
+"course": "CS", "marks": 470
+}
+Document 5
+{
+"roll_no": 105, "name": "Ravi",
+"course": "IT", "marks": 385
+}
+
+
+Step 3 — Create the Mango Index
+click:Run A Query with Mango → then look for the Index option. →Click Manage Indexes. Then create a JSON index on marks:
+
+Query 2 — Find a student by rollno 101
+{
+"selector": { "roll_no": 101
+}
+}
+
+Query 2 — Students who scored more than 400
+{
+"selector": {
+"marks": {
+"$gt": 400
+}
+}
+}
+
+Query 3 — CS students with marks > 400
+
+{
+"selector": { "course": "CS", "marks": {
+"$gt": 400
+}
+}
+}
+
+Query 4 — CS OR marks > 400
+
+{
+"selector": {
+"$or": [
+{
+"course": "CS"
+},
+{
+"marks": {
+"$gt": 400
+}
+}
+]
+}
+}
+
+Query 5 — Sort students by marks descending
+
+{
+"selector": {}, "sort": [
+{
+"marks": "desc"
+}
+]
+}
+
+Query 6 — CS students, roll number descending, only course and roll_no
+Create roll number index: Click Manage Indexes → create this:
+
+{
+"index": {
+"fields": [ "roll_no"
+]
+},
+"name": "rollno-index",
+"type": "json"
+}
+
+Now run Query 6
+{
+"selector": {
+"course": "CS"
+},
+"fields": [
+"course", "roll_no"
+],
+"sort": [
+{
+"roll_no": "desc"
+}
+]
+}
