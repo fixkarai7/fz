@@ -1,0 +1,55 @@
+Cassandra Database (Docker Desktop)
+Steps:
+1.Open Docker Desktop > Terminal > Enable
+2.docker pull Cassandra
+3.docker --version
+4.docker run --name ak-cassandra-db -d -p 9042:9042 cassandra:4.1
+5.docker ps [process]
+6.docker logs -f ak-cassandra-db [ctrl+c to exit]
+7.To Client (cqlsh)
+8.docker exec -it ak-cassandra-db cqlsh
+
+Practical No. 01:
+
+1} Create a database student with 5 records 
+2} Display all the records
+3} Select record with id=112
+4} Display records with course CS
+
+Step 1 — Create the keyspace
+
+CREATE KEYSPACE student WITH replication = {
+'class': 'SimpleStrategy', 'replication_factor': 1
+};
+
+Then: USE student;
+
+Step 2 — Create the table
+
+CREATE TABLE students ( id int PRIMARY KEY, name text,
+course text
+);
+
+Step 3 — Insert 5 records
+
+INSERT INTO students (id, name, course) VALUES (111, 'Amit', 'IT');
+
+INSERT INTO students (id, name, course) VALUES (112, 'Rahul', 'CS');
+
+INSERT INTO students (id, name, course) VALUES (113, 'Priya', 'DS');
+
+INSERT INTO students (id, name, course) VALUES (114, 'Sneha', 'CS');
+
+INSERT INTO students (id, name, course) VALUES (115, 'Ravi', 'IT');
+
+Step 4 — Display all students
+
+SELECT * FROM students;
+
+Step 5 — Display student with ID 112
+
+SELECT * FROM students WHERE id = 112;
+
+Step 6 — Display students from CS
+
+SELECT * FROM students WHERE course = 'CS' ALLOW FILTERING;
