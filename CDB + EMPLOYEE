@@ -1,0 +1,107 @@
+2)Create an employee database with documents containing the fields empid, empname, design, dept, salary create min 5 docs and perform the following queries.
+❖Insert 5 documents
+➢{ "empid": 101, "empname": "John Doe", "designation": "Manager", "department": "Sales", "salary": 95000 }
+➢{ "empid": 102, "empname": "Jane Smith", "designation": "Sales Executive", "department": "Sales", "salary": 60000 }
+➢{ "empid": 103, "empname": "Alice Johnson", "designation": "Manager", "department": "Marketing", "salary": 85000 }
+➢{ "empid": 104, "empname": "Bob Brown", "designation": "Senior Executive", "department": "Marketing", "salary": 75000 }
+➢{ "empid": 105, "empname": "Charlie Davis", "designation": "Junior Executive", "department": "Sales", "salary": 45000 }
+
+❖Retrieve all the employees belonging to the sales dept.
+❖Retrieve all the employees whose design is either manager or salary gt 50000
+❖Display all the employees whose salary is gt 50000 and lt 80000
+❖Display all the employee details in the descending order of their salaries (create index) Display all employees of marketing dept in the desc order of their salary
+
+Step 1 — Create the Employee database
+
+Step 2 — Insert the 5 employee documents
+
+Employee 101
+{
+"empid": 101, "empname": "John Doe", "designation": "Manager", "department": "Sales", "salary": 95000
+}
+
+Employee 102
+{
+"empid": 102, "empname": "Jane Smith",
+"designation": "Sales Executive", "department": "Sales",
+"salary": 60000
+}
+
+Employee 103
+{
+"empid": 103,
+"empname": "Alice Johnson", "designation": "Manager", "department": "Marketing", "salary": 85000
+}
+
+Employee 104
+{
+"empid": 104,
+"empname": "Bob Brown", "designation": "Senior Executive", "department": "Marketing", "salary": 75000
+}
+
+Employee 105
+{
+"empid": 105,
+"empname": "Charlie Davis", "designation": "Junior Executive", "department": "Sales",
+"salary": 45000
+}
+
+Run A Query with Mango → Manage Indexes →Click Create Index.
+
+Step 4 — Queries
+1.Retrieve all employees belonging to Sales
+
+{
+"selector": { "department": "Sales"
+}
+}
+
+2.Designation is Manager OR salary > 50000
+
+{
+"selector": {
+"$or": [
+{
+"designation": "Manager"
+},
+{
+"salary": { "$gt": 50000
+}
+}
+]
+}
+}
+
+3.Salary > 50000 AND salary < 80000
+
+{
+"selector": {
+"salary": {
+"$gt": 50000,
+"$lt": 80000
+}
+}
+}
+
+4.Display all employees in descending salary order
+
+{
+"selector": {}, "sort": [
+{
+"salary": "desc"
+}
+]
+}
+
+5.Marketing employees in descending salary order
+
+{
+"selector": {
+"department": "Marketing"
+},
+"sort": [
+{
+"salary": "desc"
+}
+]
+}
