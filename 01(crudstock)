@@ -1,0 +1,105 @@
+PRACTICAL NO: 01
+
+Aim:
+1.Create a database Organization with a collection Stock. Insert 10 records in it with fields, Id(explicitly given), Stock Name, Qty, rate_ per_ unit and Supplier list. . Perform the following:
+a. Display all documents
+b. Display all documents with Qty less than 400 and rate_ per_ unit greater than 100
+c. Display only Stock Name,Qty and Supplier list of all documents sorted by descending order of Stock Name .
+d. Update all documents with Qty less than 100 to 500
+
+CODE;
+
+use Organization 
+db.createCollection("Stock")
+
+db.Stock.insertMany([
+{
+Id: 1,
+"Stock Name": "Laptop", Qty: 250,
+rate_per_unit: 55000, "Supplier list": ["Dell", "HP"]
+},
+{
+Id: 2,
+"Stock Name": "Keyboard", Qty: 450,
+rate_per_unit: 1200,
+"Supplier list": ["Logitech", "HP"]
+},
+{
+Id: 3,
+"Stock Name": "Mouse", Qty: 80,
+rate_per_unit: 700,
+"Supplier list": ["Logitech", "Dell"]
+},
+{
+Id: 4,
+"Stock Name": "Monitor", Qty: 350,
+rate_per_unit: 8500,
+"Supplier list": ["Samsung", "LG"]
+},
+{
+Id: 5,
+"Stock Name": "Printer", Qty: 90,
+rate_per_unit: 12000,
+"Supplier list": ["HP", "Canon"]
+},
+{
+Id: 6,
+"Stock Name": "Scanner", Qty: 150,
+rate_per_unit: 9000,
+"Supplier list": ["Canon", "Epson"]
+},
+{
+Id: 7,
+"Stock Name": "Webcam", Qty: 60,
+rate_per_unit: 2500,
+"Supplier list": ["Logitech", "Sony"]
+},
+{
+Id: 8,
+"Stock Name": "Speaker", Qty: 500,
+rate_per_unit: 3000,
+"Supplier list": ["JBL", "Boat"]
+},
+{
+Id: 9,
+"Stock Name": "Hard Disk", Qty: 75,
+rate_per_unit: 4500,
+"Supplier list": ["Seagate", "WD"]
+},
+{
+Id: 10,
+"Stock Name": "RAM", Qty: 300,
+rate_per_unit: 3200,
+"Supplier list": ["Corsair", "Kingston"]
+}
+])
+
+
+A) db.Stock.find()
+
+B) 
+
+db.Stock.find({ Qty: { $lt: 400 },
+rate_per_unit: { $gt: 100 }
+})
+
+C) 
+
+db.Stock.find(
+{},
+{
+_id: 0,
+"Stock Name": 1,
+Qty: 1,
+"Supplier list": 1
+}
+).sort({
+"Stock Name": -1
+})
+
+D)
+
+db.stock.updateMany(
+{Qty : {$lt:100} },
+{set : {Qty : 500}}
+)
