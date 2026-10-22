@@ -1,0 +1,42 @@
+Python + Redis.
+
+Write a Python program to:
+a.Connect to Redis running on localhost.
+b.Store your name, age, and city using separate keys.
+c.Retrieve and display the values.
+d.Check whether the key name exists.
+e.Delete the age key.
+
+Step 1 — Install Redis Python library
+!pip install redis
+
+Step 2 — Connect to Redis
+import redis
+r = redis.Redis( host="localhost", port=6379, decode_responses=True
+)
+print("Connected to Redis")
+
+Step 3 — Store name, age and city
+r.set("name", "Vimlesh")
+r.set("age", 24)
+r.set("city", "Navi Mumbai") print("Data stored successfully")
+
+
+Step 4 — Retrieve and display the values
+print("Name:", r.get("name"))
+print("Age:", r.get("age"))
+print("City:", r.get("city"))
+
+Step 5 — Check whether name exists
+if r.exists("name"): 
+print("Name key exists")
+else:
+print("Name key does not exist")
+
+Step 6 — Delete the age key
+r.delete("age")
+
+print("Age key deleted")
+
+Verify:
+print("Age:", r.get("age"))
