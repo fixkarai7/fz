@@ -1,0 +1,824 @@
+
+PRACTICAL NO. 1  -  MongoDB : Organization database, Stock collection
+
+// 1. Create database and collection
+use Organization
+db.createCollection("Stock")
+
+// 2. Insert 10 records
+db.Stock.insertMany([
+{
+Id: 1,
+"Stock Name": "Laptop", Qty: 250,
+rate_per_unit: 55000, "Supplier list": ["Dell", "HP"]
+},
+
+])
+
+// a. Display all documents
+db.Stock.find()
+
+// b. Qty less than 400 AND rate greater than 100
+db.Stock.find({ Qty: { $lt: 400 },
+rate_per_unit: { $gt: 100 }
+})
+
+// c. Display only Stock Name, Qty and Supplier list, sorted descending by Stock Name
+db.Stock.find(
+{},
+{
+_id: 0,
+"Stock Name": 1,
+Qty: 1,
+"Supplier list": 1
+}
+).sort({
+"Stock Name": -1
+})
+
+// d. Update all documents with Qty less than 100 to 500
+db.Stock.updateMany(
+{ Qty: { $lt: 100 } },
+{ $set: { Qty: 500 } }
+)
+
+
+=====================================================================
+PRACTICAL NO. 2  -  MongoDB : Library collection (embedded documents)
+
+
+----- CODE -----
+// 1. Create collection
+use books
+db.createCollection("Library")
+
+// 2. Insert records
+db.Library.insertMany([
+{
+Userid: "U001", No_of_books: 2, Bookdetails: [
+{
+Title: "Mastering Cloud Computing", Author: "Rajkumar Buyya"
+},
+{
+Title: "Data Science", Author: "Dr.Upadhyay"
+}
+]
+},
+{
+Userid: "U002", No_of_books: 3, Bookdetails: [
+{
+Title: "Graphics", Author: "Dr.Mehta"
+},
+{
+Title: "Python", Author: "S.D.Sharma"
+},
+{
+Title: "DBMS", Author: "B.K.Sharma"
+}
+]
+}
+])
+
+// a. Display documents where No_of_books < 3
+db.Library.find({ No_of_books: { $lt: 3 }
+})
+
+// b. Sort by ascending No_of_books
+db.Library.find().sort({ No_of_books: 1
+})
+
+// c. Display only Userid and Bookdetails
+db.Library.find(
+{},
+{
+_id: 0,
+Userid: 1,
+Bookdetails: 1
+}
+)
+
+// d. Display only Bookdetails where No_of_books is either 3 or 2
+db.Library.find(
+{
+No_of_books: { $in: [2, 3] }
+},
+{
+_id: 0,
+Bookdetails: 1
+}
+)
+
+
+=====================================================================
+PRACTICAL NO. 3  -  MongoDB : MapReduce - Total Sales by Product
+
+
+----- CODE -----
+// Insert data
+db.sales.insertMany([
+{ "_id": 1, "product": "apple", "amount": 100 },
+{ "_id": 2, "product": "banana", "amount": 150 },
+{ "_id": 3, "product": "apple", "amount": 200 },
+{ "_id": 4, "product": "oranges", "amount": 100 },
+{ "_id": 5, "product": "banana", "amount": 350 },
+{ "_id": 6, "product": "oranges", "amount": 200 }
+])
+
+// Map function
+var mapFunction = function() { 
+  emit(this.product, this.amount);
+};
+
+// Reduce function
+var reduceFunction = function(key, values) { 
+  return Array.sum(values);
+};
+
+// Execute MapReduce
+db.sales.mapReduce( mapFunction, reduceFunction,
+{ out: "total_sales" }
+)
+
+// Display result
+db.total_sales.find()
+
+
+=====================================================================
+PRACTICAL NO. 4  -  MongoDB : MapReduce - Word Count
+
+----- CODE -----
+// Insert data
+db.words.insertMany([
+{ "_id": 1, "text": "hello world mongoDB is a NoSQL database" },
+{ "_id": 2, "text": "hello mongoDB hello world" },
+{ "_id": 3, "text": "hello OpenAI chatGPT is amazing" },
+{ "_id": 4, "text": "world of mongoDB and big data" },
+{ "_id": 5, "text": "data science and machine learning" }
+])
+
+// Map function
+var mapFunction = function() { 
+ var words = this.text.split(" ");
+words.forEach(function(word) {
+ emit(word, 1);
+});
+};
+
+// Reduce function
+var reduceFunction = function(key, values) { 
+ return Array.sum(values);
+};
+
+// Execute MapReduce
+db.words.mapReduce( mapFunction, reduceFunction,
+{ out: "word_count" }
+)
+
+// Display result
+db.word_count.find().sort({ value: -1 })
+
+
+=====================================================================
+PRACTICAL NO. 5  -  MongoDB : MapReduce - Average Age Calculation
+
+// Insert data
+db.person.insertMany([
+{ "_id": 1, "name": "Alice", "age": 25, "city": "New York" },
+{ "_id": 2, "name": "Bob", "age": 30, "city": "San Francisco" },
+{ "_id": 3, "name": "Charlie", "age": 35, "city": "Los Angeles" },
+{ "_id": 4, "name": "David", "age": 40, "city": "Chicago" },
+{ "_id": 5, "name": "Eve", "age": 28, "city": "Miami" }
+])
+
+// Map function
+var mapFunction = function() { emit("average_age", {
+total: this.age, count: 1
+});
+};
+
+// Reduce function
+var reduceFunction = function(key, values) { var result = {
+total: 0,
+count: 0
+};
+values.forEach(function(value) { result.total += value.total; result.count += value.count;
+});
+return result;
+};
+
+// Finalize function
+var finalizeFunction = function(key, value) { return value.total / value.count;
+};
+
+// Execute
+db.person.mapReduce( mapFunction, reduceFunction,
+{
+out: "average_age", finalize: finalizeFunction
+}
+)
+
+// Display result
+db.average_age.find()
+
+
+
+=====================================================================
+PRACTICAL NO. 6  -  Python + MongoDB : Employee collection (pymongo)
+
+----- CODE -----
+# First, in Jupyter, run:
+!pip install pymongo
+
+# Connect
+from pymongo import MongoClient
+client = MongoClient("mongodb://localhost:27017/")
+db = client["Organization"]
+employee = db["Employee"]
+print("Connected to MongoDB")
+
+# Insert records into database
+employee.insert_many([
+{
+"Empid": 111, "Empname": "John",
+"dept": "IT",
+"designation": "Developer", "salary": 55000
+},
+{
+"Empid": 112, "Empname": "Alice",
+"dept": "HR", "designation": "Executive", "salary": 45000
+}
+])
+
+# a. Display all Employee documents
+for emp in employee.find():
+ print(emp)
+
+# b. Insert employee 116
+employee.insert_one({ 
+"Empid": 116, "Empname": "Alex",
+"dept": "IT", "designation": "Manager"
+})
+print("Employee 116 inserted successfully")
+
+# c. Display document of Empid 114
+emp = employee.find_one({"Empid": 114})
+print(emp)
+
+# d. Update salary of Empid 111 to 65000
+employee.update_one(
+{"Empid": 111},
+{"$set": {"salary": 65000}}
+)
+print("Salary of Empid 111 updated successfully")
+
+# e. Delete record of Empid 116
+employee.delete_one({"Empid": 116})
+print("Employee 116 deleted successfully")
+print(employee.find_one({"Empid": 116}))
+
+# display all employees
+for emp in employee.find():
+ print(emp)
+
+
+=====================================================================
+PRACTICAL NO. 7  -  Redis commands : Sorted Set (leaderboard)
+
+
+# Q1. Basic Retrieval - top 3 players with scores
+ZADD leaderboard 1200 Alice 1800 Bob 1500 Charlie 2200 David 900 Eve
+ZREVRANGE leaderboard 0 2 WITHSCORES
+
+# Q2. Score-based Filtering - scores between 100 and 500 (inclusive)
+ZRANGEBYSCORE leaderboard 100 500 WITHSCORES
+
+# Q3. Reverse Order Retrieval - descending order of scores
+ZREVRANGE leaderboard 0 -1 WITHSCORES
+
+# Q4. Adding Members - add David with score 1800
+ZADD leaderboard 1800 David
+
+# Q5. Ranking Position of Alice
+# Alice's rank in ascending score order
+ZRANK leaderboard Alice
+# Rank from highest score to lowest
+ZREVRANK leaderboard Alice
+
+# Q6. Removing Members - remove Charlie
+ZREM leaderboard Charlie
+
+# Q7. Range Removal - remove players with score below 1500
+ZREMRANGEBYSCORE leaderboard -inf (1500
+
+# Q8. Count members with scores between 1500 and 2500
+ZCOUNT leaderboard 1500 2500
+
+# Q9. Update Bob's score - increase by 200
+ZINCRBY leaderboard 200 Bob
+
+# Q10. Combining Sorted Sets
+# Step 1 - Create the morning leaderboard and evening leaderboard
+ZADD morning_leaderboard 100 Alice 200 Bob 150 Charlie
+ZADD evening_leaderboard 200 Alice 100 Bob 250 David
+# Step 2 - Combine them
+ZUNIONSTORE daily_leaderboard 2 morning_leaderboard evening_leaderboard AGGREGATE SUM
+# Step 3 - Display the result
+ZRANGE daily_leaderboard 0 -1 WITHSCORES
+
+=====================================================================
+PRACTICAL NO. 8  -  Python + Redis : Store and retrieve basic data
+
+
+----- CODE -----
+# Step 1 - Install Redis Python library
+!pip install redis
+
+# Step 2 - Connect to Redis
+import redis
+r = redis.Redis( host="localhost", port=6379, decode_responses=True
+)
+print("Connected to Redis")
+
+# Step 3 - Store name, age and city
+r.set("name", "Vimlesh")
+r.set("age", 24)
+r.set("city", "Navi Mumbai")
+print("Data stored successfully")
+
+# Step 4 - Retrieve and display the values
+print("Name:", r.get("name"))
+print("Age:", r.get("age"))
+print("City:", r.get("city"))
+
+# Step 5 - Check whether name exists
+if r.exists("name"):
+    print("Name key exists")
+else:
+    print("Name key does not exist")
+
+# Step 6 - Delete the age key
+r.delete("age")
+print("Age key deleted")
+
+# Verify
+print("Age:", r.get("age"))
+
+
+=====================================================================
+PRACTICAL NO. 9  -  Python + Redis : Student details using Hash
+
+----- CODE -----
+# 1. Create the student hash
+student = { "roll_no": 101, "name": "Rahul",
+"course": "BCA", "marks": 85
+}
+r.hset("student:101", mapping=student)
+print("Student details stored successfully")
+
+# 2. Display all student details
+print(r.hgetall("student:101"))
+
+# 3. Display only the student's name
+print("Name:", r.hget("student:101", "name"))
+
+# 4. Update marks to 90
+r.hset("student:101", "marks", 90)
+print("Marks updated successfully")
+print("Marks:", r.hget("student:101", "marks"))
+
+# 5. Delete the course field
+r.hdel("student:101", "course")
+print("Course field deleted")
+print(r.hgetall("student:101"))
+----- END -----
+
+
+=====================================================================
+PRACTICAL NO. 10  -  Python + Redis : Task Queue using List
+
+
+
+----- CODE -----
+# 1. Add five tasks
+tasks = [
+"Task 1: Check emails", "Task 2: Process data", "Task 3: Generate report", "Task 4: Backup database", "Task 5: Send report"
+]
+for task in tasks:
+    r.rpush("task_queue", task)
+print("Five tasks added successfully")
+print(r.lrange("task_queue", 0, -1))
+
+# 2. Remove tasks from the left and process them
+while r.llen("task_queue") > 0:
+    task = r.lpop("task_queue")
+    print("Processed:", task)
+
+# 3. Display remaining tasks
+print("Remaining tasks:", r.lrange("task_queue", 0, -1))
+
+
+=====================================================================
+PRACTICAL NO. 11  -  Python + Redis : Unique registered users using Set
+
+
+# 1. Add registered users
+users = ["U101", "U102", "U103", "U101", "U104"]
+for user in users:
+    r.sadd("registered_users", user)
+print("Users added successfully")
+print("Unique users:", r.smembers("registered_users"))
+
+# 2. Check whether U102 exists
+if r.sismember("registered_users", "U102"):
+    print("U102 exists")
+else:
+    print("U102 does not exist")
+
+# 3. Remove U103
+r.srem("registered_users", "U103")
+print("U103 removed")
+print("Final set:", r.smembers("registered_users"))
+
+
+=====================================================================
+PRACTICAL NO. 12  -  Python + Redis : 4-digit OTP with expiration
+
+# 1. Generate a random 4-digit OTP
+import random
+otp = random.randint(1000, 9999)
+print("Generated OTP:", otp)
+
+# 2. Store OTP with 120-second expiration
+r.setex("otp:user101", 120, otp)
+print("OTP stored successfully")
+
+# 3. Retrieve and display the OTP
+stored_otp = r.get("otp:user101")
+print("Stored OTP:", stored_otp)
+
+# 4. Display remaining TTL
+ttl = r.ttl("otp:user101")
+print("Remaining TTL:", ttl, "seconds")
+
+
+=====================================================================
+PRACTICAL NO. 13  -  Python + Redis : Employee records using Hashes
+
+
+# 1. Add both employees
+r.hset("employee:E101", mapping={ "name": "Amit",
+"department": "IT", "salary": 50000
+})
+r.hset("employee:E102", mapping={ "name": "Neha",
+"department": "HR", "salary": 45000
+})
+print("Employee records added successfully")
+
+# 2. Display E101 and E102 details
+print("E101:", r.hgetall("employee:E101"))
+print("E102:", r.hgetall("employee:E102"))
+
+# 3. Update E101's salary
+r.hset("employee:E101", "salary", 55000)
+print("E101 salary updated successfully")
+
+# 4. Delete E102
+r.delete("employee:E102")
+print("E102 deleted successfully")
+
+# 5. Check whether E102 still exists
+if r.exists("employee:E102"):
+    print("E102 still exists")
+else:
+    print("E102 does not exist")
+
+
+#####################################################################
+#                            COUCHDB                                #
+#####################################################################
+(All CouchDB work is done in Fauxton: http://127.0.0.1:5984/_utils
+ Create Database -> New Document -> paste JSON -> Create Document.
+ Queries: Run A Query with Mango -> paste JSON -> Run Query.
+ Indexes: Run A Query with Mango -> Manage Indexes -> paste JSON -> Create Index.)
+
+=====================================================================
+PRACTICAL NO. 14  -  CouchDB : student database (Mango queries, index)
+
+# Step 1 - Create the database
+# On the Databases page click "Create Database", enter: student
+
+# Step 2 - Create the 5 documents (New Document, one by one)
+# Document 1
+{
+"roll_no": 101, "name": "AAA",
+"course": "CS", "marks": 490
+}
+
+# Document 2
+{
+"roll_no": 102, "name": "Amit",
+"course": "IT", "marks": 450
+}
+
+# Step 3 - Create the Mango Index on marks (Manage Indexes -> Create Index)
+{
+"index": {
+"fields": [
+"marks"
+]
+},
+"name": "marks-index",
+"type": "json"
+}
+
+# Query 1 - Find a student by rollno 101
+{
+"selector": { "roll_no": 101
+}
+}
+
+# Query 2 - Students who scored more than 400
+{
+"selector": {
+"marks": {
+"$gt": 400
+}
+}
+}
+
+# Query 3 - CS students with marks > 400
+{
+"selector": { "course": "CS", "marks": {
+"$gt": 400
+}
+}
+}
+
+# Query 4 - CS OR marks > 400
+{
+"selector": {
+"$or": [
+{
+"course": "CS"
+},
+{
+"marks": {
+"$gt": 400
+}
+}
+]
+}
+}
+
+# Query 5 - Sort students by marks descending
+{
+"selector": {}, "sort": [
+{
+"marks": "desc"
+}
+]
+}
+
+# Query 6 - CS students, roll number descending, only course and roll_no
+# First create roll number index (Manage Indexes -> Create Index):
+{
+"index": {
+"fields": [ "roll_no"
+]
+},
+"name": "rollno-index",
+"type": "json"
+}
+
+# Now run Query 6
+{
+"selector": {
+"course": "CS"
+},
+"fields": [
+"course", "roll_no"
+],
+"sort": [
+{
+"roll_no": "desc"
+}
+]
+}
+
+
+=====================================================================
+PRACTICAL NO. 15  -  CouchDB : employee database
+
+# Step 1 - Create the Employee database
+# On the Databases page click "Create Database", enter: employee
+
+# Step 2 - Insert the 5 employee documents (New Document, one by one)
+# Employee 101
+{
+"empid": 101, "empname": "John Doe", "designation": "Manager", "department": "Sales", "salary": 95000
+}
+
+# Employee 102
+{
+"empid": 102, "empname": "Jane Smith",
+"designation": "Sales Executive", "department": "Sales",
+"salary": 60000
+}
+
+
+# Step 3 - Create an index (Run A Query with Mango -> Manage Indexes -> Create Index)
+{
+"index": {
+"fields": [
+"salary"
+]
+},
+"name": "salary-index",
+"type": "json"
+}
+
+# Step 4 - Queries
+# 1. Retrieve all employees belonging to Sales
+{
+"selector": { "department": "Sales"
+}
+}
+
+# 2. Designation is Manager OR salary > 50000
+{
+"selector": {
+"$or": [
+{
+"designation": "Manager"
+},
+{
+"salary": { "$gt": 50000
+}
+}
+]
+}
+}
+
+# 3. Salary > 50000 AND salary < 80000
+{
+"selector": {
+"salary": {
+"$gt": 50000,
+"$lt": 80000
+}
+}
+}
+
+# 4. Display all employees in descending salary order
+{
+"selector": {}, "sort": [
+{
+"salary": "desc"
+}
+]
+}
+
+# 5. Marketing employees in descending salary order
+{
+"selector": {
+"department": "Marketing"
+},
+"sort": [
+{
+"salary": "desc"
+}
+]
+}
+
+PRACTICAL NO. 16  -  Cassandra (Docker) setup + student database
+
+# Docker setup (run in Docker Desktop terminal / Command Prompt)
+# 1. Open Docker Desktop > Terminal > Enable
+docker pull cassandra
+docker --version
+docker run --name ak-cassandra-db -d -p 9042:9042 cassandra:4.1
+docker ps
+docker logs -f ak-cassandra-db
+#    (press ctrl+c to exit the logs; wait ~1 min till Cassandra is fully started)
+# Open the CQL client (cqlsh)
+docker exec -it ak-cassandra-db cqlsh
+
+-- ===== Now inside cqlsh =====
+-- Step 1 - Create the keyspace
+CREATE KEYSPACE student WITH replication = {
+'class': 'SimpleStrategy', 'replication_factor': 1
+};
+USE student;
+
+-- Step 2 - Create the table
+CREATE TABLE students ( id int PRIMARY KEY, name text,
+course text
+);
+
+-- Step 3 - Insert 5 records
+INSERT INTO students (id, name, course) VALUES (111, 'Amit', 'IT');
+INSERT INTO students (id, name, course) VALUES (112, 'Rahul', 'CS');
+INSERT INTO students (id, name, course) VALUES (113, 'Priya', 'DS');
+INSERT INTO students (id, name, course) VALUES (114, 'Sneha', 'CS');
+INSERT INTO students (id, name, course) VALUES (115, 'Ravi', 'IT');
+
+-- Step 4 - Display all students
+SELECT * FROM students;
+
+-- Step 5 - Display student with ID 112
+SELECT * FROM students WHERE id = 112;
+
+-- Step 6 - Display students from CS
+SELECT * FROM students WHERE course = 'CS' ALLOW FILTERING;
+
+
+
+=====================================================================
+PRACTICAL NO. 17  -  Cassandra : Online retailer product catalog
+
+-- 1. Create keyspace
+CREATE KEYSPACE retailer WITH replication = {
+'class': 'SimpleStrategy', 'replication_factor': 1
+};
+USE retailer;
+
+-- 2. Create products table
+CREATE TABLE products ( category text,
+price int, product_id int, product_name text, stock int,
+PRIMARY KEY ((category), price, product_id)
+) WITH CLUSTERING ORDER BY (price ASC);
+
+-- 3. Insert 5 products
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('electronics', 55000, 101, 'Laptop', 50);
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('electronics', 25000, 102, 'Mobile', 150);
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('clothing', 800, 103, 'T-Shirt', 200);
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('clothing', 1500, 104, 'Jeans', 80);
+INSERT INTO products
+(category, price, product_id, product_name, stock) VALUES ('electronics', 2000, 105, 'Headphones', 120);
+
+-- 4. Display all products
+SELECT * FROM products;
+
+-- Query 1 - Electronics
+SELECT * FROM products WHERE category = 'electronics';
+
+-- Query 2 - Clothing with price < 1000
+SELECT * FROM products WHERE category = 'clothing' AND price < 1000;
+
+-- Query 3 - Clothing sorted by price
+SELECT * FROM products WHERE category = 'clothing' ORDER BY price ASC;
+
+-- Query 4 - Electronics with stock > 100
+SELECT * FROM products WHERE category = 'electronics' AND stock > 100
+ALLOW FILTERING;
+
+=====================================================================
+PRACTICAL NO. 18  -  Cassandra : Library management system
+
+-- 1. Create keyspace
+CREATE KEYSPACE library WITH replication = {
+'class': 'SimpleStrategy', 'replication_factor': 1
+};
+USE library;
+
+-- 2. Create books table
+CREATE TABLE books (
+book_id int PRIMARY KEY, title text,
+author text, category text, price int, availability text
+);
+
+-- 3. Insert 5 books
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(1, 'DBMS', 'Korth', 'Database', 650, 'Available');
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(2, 'Python Programming', 'Guido', 'Programming', 550, 'Available');
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(3, 'Operating System', 'Silberschatz', 'OS', 700, 'Available');
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(4, 'Computer Networks', 'Tanenbaum', 'Networking', 800, 'Available');
+INSERT INTO books
+(book_id, title, author, category, price, availability) VALUES
+(5, 'Data Science', 'Han', 'Data Science', 900, 'Available');
+
+-- 4. Display all books
+SELECT * FROM books;
+
+-- 5. Retrieve a particular book
+SELECT * FROM books WHERE book_id = 3;
+
+-- 6. Change availability
+UPDATE books
+SET availability = 'Not Available' WHERE book_id = 3;
+SELECT * FROM books WHERE book_id = 3;
+
+-- 7. Delete a book
+DELETE FROM books WHERE book_id = 5;
+SELECT * FROM books;
